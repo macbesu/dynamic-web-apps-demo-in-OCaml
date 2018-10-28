@@ -1,0 +1,4 @@
+# dune build ./main.bc.js index.html style.css
+# OCAMLPARAM: unset
+$ /usr/bin/getconf _NPROCESSORS_ONLN > /var/folders/6j/m9tn3hys127_3bg163h5rn_00000gn/T/dune837e87.output 2> /dev/null
+$ /usr/local/bin/ocamlc.opt -config > /var/folders/6j/m9tn3hys127_3bg163h5rn_00000gn/T/dune7f72b6.output
