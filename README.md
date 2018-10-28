@@ -21,6 +21,8 @@ $ eval $(opam config env)
 
 # Dune build
 $ dune build {main.bc.js,index.html,style.css}
+# or
+$ chmod +x gen.sh && ./gen.sh
 ```
 
 ## Opam tools
