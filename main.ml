@@ -12,7 +12,7 @@ module App : sig
 end = struct
 
   module Model = struct
-    type t = unit
+    type t = int list
 
     let cutoff = phys_equal
   end
@@ -28,17 +28,32 @@ end = struct
   end
 
   let initial_model : Model.t =
-    ()
+    List.init 100 ~f:(fun _ -> Random.int 100)
 
   let apply_action (_action:Action.t) (model:Model.t) (_:State.t) =
     model
 
   let view (model:Model.t Incr.t) ~inject:_ =
     let open Vdom in
-    let%map _model = model in
+    let%map model = model in
+    let rows =
+      List.mapi model ~f:(fun i count ->
+        Node.tr
+          []
+          [ Node.td
+            []
+            [ Node.text (Int.to_string (i + 1)) ]
+          ; Node.td
+            []
+            [ Node.text (Int.to_string count) ]
+          ]
+      )
+    in
     Node.body
       []
-      [ Node.h3 [] [ Node.text "My Incr_dom App" ] ]
+      [ Node.h3 [] [ Node.text "My First Incr_dom App" ]
+      ; Node.table [] rows
+      ]
     
   let on_startup ~schedule:_ (_model:Model.t) =
     Deferred.return ()
