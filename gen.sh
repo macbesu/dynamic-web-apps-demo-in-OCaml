@@ -1,2 +1,2 @@
 #!/bin/bash
-dune build {main.bc.js,index.html,style.css}
+jbuilder clean && jbuilder build ./{main.bc.js,index.html,style.css}
