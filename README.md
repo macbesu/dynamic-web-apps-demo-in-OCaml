@@ -13,7 +13,7 @@ Follow the commands listed as below:
 # Clone the project
 $ git clone git@github.com:ivanchean/dynamic-web-apps-demo-in-OCaml.git && cd dynamic-web-apps-demo-in-OCaml
 
-# Install packages used in project via opam
+# Install packages used in this project via opam
 $ opam install incr_dom js_of_ocaml ppx_jane js_of_ocaml-ppx
 
 # Install useful optional packages via opam
@@ -23,7 +23,7 @@ $ opam install merlin ocp-indent dune utop
 $ eval $(opam config env)
 
 # Build the target JavaScript file
-$ jbuilder build {main.bc.js,index.html,style.css}
+$ jbuilder build ./{main.bc.js,index.html,style.css}
 # or
 $ chmod +x gen.sh && ./gen.sh
 ```
