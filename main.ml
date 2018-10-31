@@ -7,7 +7,7 @@ module App : sig
 
   include App_intf.S_simple
 
-  val initial_model: Model.t
+  val initial_model: length:int -> Model.t
 
 end = struct
 
@@ -30,8 +30,8 @@ end = struct
     type t = unit
   end
 
-  let initial_model : Model.t =
-    List.init 100 ~f:(fun _ -> Random.int 100)
+  let initial_model ~length : Model.t =
+    List.init length ~f:(fun _ -> Random.int 100)
 
   let apply_action (action:Action.t) (model:Model.t) (_:State.t) =
     let update_idx idx ~f =
@@ -84,6 +84,24 @@ end = struct
 end
 
 let () =
+  let length =
+    let uri =
+      Dom_html.window##.location##.search
+      |> Js.to_string
+      |> Uri.of_string
+    in
+    let length =
+      match Uri.get_query_param uri "rows" with
+      | None     -> None
+      | Some str ->
+        match Or_error.try_with (fun () -> Int.of_string str) with
+        | Ok length -> Some length
+        | Error err ->
+          Async_js.log_s [%message "Failed to parse row num from url" ~_:(err:Error.t)];
+          None  
+    in
+    Option.value length ~default:100
+  in
   Start_app.simple
     (module App)
-    ~initial_model:App.initial_model
+    ~initial_model:(App.initial_model ~length)
