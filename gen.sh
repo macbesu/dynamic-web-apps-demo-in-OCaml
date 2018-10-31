@@ -1,2 +1,2 @@
 #!/bin/bash
-jbuilder clean && jbuilder build ./{main.bc.js,index.html,style.css}
+dune clean && dune build ./{main.bc.js,index.html,style.css} --profile=release
