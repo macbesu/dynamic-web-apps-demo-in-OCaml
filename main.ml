@@ -12,7 +12,7 @@ module App : sig
 end = struct
 
   module Model = struct
-    type t = int list
+    type t = int Int.Map.t
 
     let cutoff = phys_equal
   end
@@ -31,11 +31,11 @@ end = struct
   end
 
   let initial_model ~length : Model.t =
-    List.init length ~f:(fun _ -> Random.int 100)
+    Int.Map.of_alist_exn (List.init length ~f:(fun i -> i, Random.int 100))
 
   let apply_action (action:Action.t) (model:Model.t) (_:State.t) =
     let update_idx idx ~f =
-      List.mapi model ~f:(fun i c -> if idx = i then f c else c)
+      Map.mapi model ~f:(fun ~key:i ~data:c -> if idx = i then f c else c)
     in
     match action with
       | Increment idx -> update_idx idx ~f:(fun c -> c + 1)
@@ -43,9 +43,8 @@ end = struct
 
   let view (model:Model.t Incr.t) ~inject =
     let open Vdom in
-    let%map model = model in
-    let rows =
-      List.mapi model ~f:(fun i count ->
+    let%map rows =
+      Incr.Map.mapi model ~f:(fun ~key:i ~data:count ->
         let color =
           if count < 10
           then "green"
@@ -65,15 +64,20 @@ end = struct
             [ Node.text (Int.to_string count) ]
           ]
       )
+    and total =
+      Incr.Map.unordered_fold model ~init:0
+        ~add:(fun ~key:_ ~data sum -> sum + data)
+        ~remove:(fun ~key:_ ~data sum -> sum - data)
     in
     Node.body
       []
       [ Node.h3 [] [ Node.text "My First Incr_dom App" ]
-      ; Node.table [] rows
+      ; Node.text ("Total: " ^ Int.to_string total)
+      ; Node.table [] (Map.data rows)
       ]
     
   let on_startup ~schedule (model:Model.t) =
-    let l = List.length model in
+    let l = Map.length model in
     Clock_ns.every (Time_ns.Span.of_sec 0.05)
       (fun () -> schedule (Action.Increment (Random.int l)));
     Deferred.return ()
